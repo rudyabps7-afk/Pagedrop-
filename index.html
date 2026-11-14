@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PageDrop books</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,600&display=swap" rel="stylesheet">
+<style>
+/* VOICE: quick-commerce shop, fast, bright, friendly, built for students
+   IDEA: a 10-minute grocery app whose shelves hold books instead of groceries
+   PICTURE: a filled bookshelf in the hero; every product is a drawn book cover
+   COLOUR and TYPE: shop yellow, deep basket green, white; Figtree for UI, Fraunces on covers
+   LAYOUT: sticky header with ETA, search and cart; banners, category tiles, scrolling rows; category page with sidebar */
+:root{color-scheme:light dark;--bg:light-dark(#fff,#111312);--soft:light-dark(#f4f6fb,#1a1d1c);--ink:light-dark(#1c1c1c,#eceeed);--mut:light-dark(#666,#a3a8a6);--line:light-dark(#e8e8e8,#2b2f2d);--card:light-dark(#fff,#181b1a);--y:#f8cb46;--g:#0c831f;--gd:light-dark(#0c831f,#3ccf58)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Figtree,system-ui,sans-serif;overflow-x:clip}
+button{font-family:inherit;cursor:pointer}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--g);outline-offset:2px}
+header{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:20px;padding:0 24px 0 0;height:86px}
+.logo{background:var(--y);align-self:stretch;display:flex;align-items:center;padding:0 24px;font:800 30px/1 Figtree;letter-spacing:-1.2px;color:#1c1c1c;border:0;text-decoration:none}
+.logo i{color:var(--g);font-style:normal}
+.loc{background:none;border:0;text-align:left;color:var(--ink);padding:4px 0;max-width:240px}
+.loc b{display:block;font:800 18px/1.2 Figtree}
+.loc span{font-size:13px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.search{flex:1;display:flex;align-items:center;background:var(--soft);border:1px solid var(--line);border-radius:12px;height:48px;padding:0 14px;gap:10px;color:var(--mut)}
+.search input{border:0;background:none;font:16px Figtree;flex:1;color:var(--ink);outline:none;height:100%}
+.sellb{border:1.5px solid var(--gd);color:var(--gd);background:none;border-radius:10px;height:48px;padding:0 16px;font-weight:700;font-size:15px;white-space:nowrap}
+.cartb{background:var(--g);color:#fff;border:0;border-radius:10px;height:52px;padding:0 16px;display:flex;align-items:center;gap:10px;font:700 14px/1.2 Figtree;white-space:nowrap;text-align:left;min-width:120px}
+main{max-width:1240px;margin:0 auto;padding:16px 24px 90px}
+.hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);border-radius:20px;overflow:hidden;background:#0b5d1e;color:#fff;min-height:270px}
+.hero .txt{padding:clamp(22px,4vw,40px);display:flex;flex-direction:column;justify-content:center;gap:12px}
+.hero h1{font:800 clamp(30px,4vw,48px)/1.05 Figtree;margin:0;text-wrap:balance;color:var(--y)}
+.hero p{margin:0;max-width:44ch;opacity:.92}
+.hb{display:flex;gap:10px;flex-wrap:wrap}
+.hb button{height:46px;border-radius:10px;padding:0 18px;font-weight:700;font-size:15px;border:0}
+.hb .p{background:var(--y);color:#1c1c1c}.hb .s{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.7)}
+.shelf{display:flex;align-items:flex-end;justify-content:center;gap:3px;padding:30px 20px 0;background:radial-gradient(circle at 60% 30%,#1a8a33,#0b5d1e 70%);border-bottom:16px solid #6b4423;box-shadow:inset 0 -2px 0 #8a5a30}
+.shelf div{border-radius:3px 3px 0 0;box-shadow:inset -5px 0 rgba(0,0,0,.2),inset 2px 0 rgba(255,255,255,.15);background-image:linear-gradient(transparent 14%,rgba(255,255,255,.35) 14% 17%,transparent 17% 80%,rgba(0,0,0,.2) 80% 83%,transparent 83%)}
+.shelf div.lean{transform:rotate(8deg);transform-origin:bottom left;margin-left:6px}
+.promos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:16px 0}
+.promo{position:relative;overflow:hidden;border-radius:16px;padding:20px;min-height:170px;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;color:#1c1c1c}
+.promo h3{font:800 22px/1.1 Figtree;margin:0 0 6px;max-width:62%}.promo p{margin:0;font-size:14px;max-width:62%}
+.promo button{background:#1c1c1c;color:#fff;border:0;border-radius:8px;height:38px;padding:0 14px;font-weight:700;font-size:13px;position:relative;z-index:1}
+.promo .st{position:absolute;right:16px;bottom:-6px;display:flex;align-items:flex-end;gap:3px;transform:rotate(-6deg)}
+.promo .st span{width:22px;border-radius:3px 3px 0 0;box-shadow:inset -4px 0 rgba(0,0,0,.2)}
+.cats{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:16px 12px;margin:26px 0}
+.tile{background:none;border:0;text-align:center;font:600 13px/1.25 Figtree;color:var(--ink);padding:0}
+.ti{aspect-ratio:1;border-radius:16px;background:color-mix(in srgb,var(--c) 15%,var(--bg));display:flex;align-items:flex-end;justify-content:center;gap:3px;padding:16px 10px 0;margin-bottom:6px;overflow:hidden;transition:transform .15s}
+.tile:hover .ti{transform:translateY(-3px)}
+.ti span{width:15%;background:var(--c);border-radius:2px 2px 0 0;box-shadow:inset -3px 0 rgba(0,0,0,.2)}
+.ti span:nth-child(2){opacity:.6}
+.row{margin:30px 0}.rh{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+h2{font:700 22px/1.2 Figtree;margin:0 0 12px}
+.rh a,.link{color:var(--gd);font-weight:600;cursor:pointer;background:none;border:0;font-size:16px;white-space:nowrap}
+.rs{display:grid;grid-auto-flow:column;grid-auto-columns:176px;gap:14px;overflow-x:auto;padding:2px 2px 10px;scroll-snap-type:x proximity}
+.card{position:relative;border:1px solid var(--line);border-radius:12px;padding:10px;background:var(--card);display:flex;flex-direction:column;gap:6px;box-shadow:0 0 12px rgba(0,0,0,.04);scroll-snap-align:start}
+.cov{aspect-ratio:3/4;width:80%;margin:4px auto;border-radius:4px 8px 8px 4px;background:linear-gradient(90deg,rgba(0,0,0,.28) 0 7px,rgba(255,255,255,.12) 7px 9px,transparent 9px),linear-gradient(160deg,rgba(255,255,255,.18),transparent 50%),var(--c);color:#fff;display:flex;flex-direction:column;justify-content:space-between;padding:14px 10px 10px 17px;box-shadow:0 6px 12px -4px rgba(0,0,0,.35)}
+.ct{font:600 15px/1.15 Fraunces,Georgia,serif;display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden;text-wrap:balance}
+.ca{font-size:10.5px;opacity:.9;border-top:1px solid rgba(255,255,255,.45);padding-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.off{position:absolute;top:-1px;left:12px;background:#256fef;color:#fff;font:800 10px/1.05 Figtree;padding:6px 3px 10px;clip-path:polygon(0 0,100% 0,100% 100%,50% 86%,0 100%);z-index:1;width:30px;text-align:center}
+.used{position:absolute;top:10px;right:10px;background:#fff4dc;color:#8a5200;font:700 10px Figtree;padding:3px 6px;border-radius:4px;z-index:1}
+.eta{display:inline-flex;align-items:center;gap:4px;background:var(--soft);border-radius:4px;font:800 9px Figtree;padding:3px 5px;width:max-content}
+.bt{font:600 13.5px/1.3 Figtree;height:35px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.cond{font-size:12px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pr{display:flex;justify-content:space-between;align-items:center;margin-top:auto;gap:6px}
+.pr b{font-size:13.5px;white-space:nowrap;display:block}.pr s{color:var(--mut);font-size:12px;display:block}
+.add{border:1px solid var(--gd);color:var(--gd);background:light-dark(#f7fff9,#13261a);border-radius:8px;font:700 13px Figtree;height:38px;width:76px}
+.step{display:flex;align-items:center;background:var(--g);color:#fff;border-radius:8px;height:38px;width:76px;justify-content:space-between}
+.step button{background:none;border:0;color:#fff;font:700 18px/1 Figtree;width:26px;height:38px}.step b{font-size:13px}
+.cv{display:grid;grid-template-columns:230px minmax(0,1fr);border:1px solid var(--line);border-radius:14px;overflow:hidden;min-height:72vh}
+.side{border-right:1px solid var(--line);overflow-y:auto;max-height:80vh;position:sticky;top:86px}
+.side button{display:flex;gap:10px;align-items:center;width:100%;padding:10px 12px;border:0;border-left:4px solid transparent;background:none;text-align:left;font:500 14px/1.25 Figtree;color:var(--ink);min-height:60px}
+.side button.on{background:color-mix(in srgb,var(--g) 10%,var(--bg));border-left-color:var(--g);font-weight:700}
+.mi{flex:none;width:38px;height:38px;border-radius:10px;background:color-mix(in srgb,var(--c) 18%,var(--bg));display:flex;align-items:flex-end;justify-content:center;gap:2px;padding:7px 6px 0}
+.mi i{width:6px;background:var(--c);border-radius:1px 1px 0 0}
+.ch{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--line)}
+.ch h2{margin:0;font-size:18px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.chips button{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:0 14px;height:38px;font:600 13px Figtree;color:var(--ink)}
+.chips button.on{border-color:var(--g);color:var(--gd);background:color-mix(in srgb,var(--g) 9%,var(--bg))}
+.chips select{height:38px;border-radius:999px;width:auto;padding:0 12px;font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:14px;padding:16px;background:var(--soft);align-content:start}
+.empty{text-align:center;padding:48px 16px;color:var(--mut)}.empty b{display:block;color:var(--ink);font-size:18px;margin-bottom:6px}
+.ov,.mo{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:40;display:none}
+.ov.open{display:flex;justify-content:flex-end}
+.drawer{width:min(420px,100%);height:100%;background:var(--soft);display:flex;flex-direction:column}
+.dh{background:var(--card);padding:14px 16px;display:flex;justify-content:space-between;align-items:center;font:700 18px Figtree}
+.x{background:none;border:0;font-size:26px;line-height:1;color:var(--ink);width:44px;height:44px}
+.db{flex:1;overflow-y:auto;padding:12px;display:grid;gap:12px;align-content:start}
+.box{background:var(--card);border-radius:12px;padding:14px}
+.box h4{margin:0 0 8px;font-size:15px}
+.del{display:flex;gap:10px;align-items:center;font-size:13px;color:var(--mut)}.del b{color:var(--ink);font-size:15px;display:block}
+.ci{display:grid;grid-template-columns:46px minmax(0,1fr) auto;gap:12px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
+.ci:first-of-type{border-top:0}
+.mc{width:46px;aspect-ratio:3/4;border-radius:2px 5px 5px 2px;background:linear-gradient(90deg,rgba(0,0,0,.28) 0 4px,transparent 4px),var(--c)}
+.ci p{margin:0;font-size:13px;font-weight:600;line-height:1.3}.ci small{color:var(--mut);font-size:12px}
+.bl{display:flex;justify-content:space-between;font-size:14px;padding:3px 0;gap:10px}.bl span:last-child{white-space:nowrap}
+.bl.t{font-weight:800;font-size:15px;border-top:1px solid var(--line);margin-top:6px;padding-top:9px}
+.save{color:#256fef;font-weight:600;font-size:13px;background:color-mix(in srgb,#256fef 10%,var(--card));border-radius:8px;padding:8px 10px;margin-top:8px}
+.df{background:var(--card);padding:14px}
+.go{width:100%;background:var(--g);color:#fff;border:0;border-radius:10px;height:56px;display:flex;justify-content:space-between;align-items:center;padding:0 16px;font:700 16px Figtree}
+.go:disabled{opacity:.5;cursor:not-allowed}
+.mo.open{display:flex;align-items:center;justify-content:center;padding:16px;z-index:50}
+.md{background:var(--card);border-radius:18px;width:min(540px,100%);max-height:92vh;overflow-y:auto;padding:22px}
+.mh{display:flex;justify-content:space-between;align-items:center;margin:-6px -8px 4px 0}.mh h3{margin:0;font:800 22px Figtree}
+.md p.lead{margin:0 0 4px;color:var(--mut);font-size:14px}
+label{display:block;font:600 13px Figtree;margin:12px 0 5px}
+input,select,textarea{width:100%;height:46px;border:1px solid var(--line);border-radius:10px;padding:0 12px;font:16px Figtree;background:var(--bg);color:var(--ink)}
+textarea{height:76px;padding:10px 12px;resize:vertical}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0 10px}
+.hint{background:color-mix(in srgb,var(--y) 32%,var(--card));border-radius:10px;padding:10px 12px;font-size:14px;margin-top:14px}
+.prev{display:flex;gap:12px;align-items:center;margin-top:8px}.prev img{width:64px;height:84px;object-fit:cover;border-radius:6px}
+.radio{display:flex;gap:8px;flex-wrap:wrap}.radio label{margin:0;display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:10px;padding:0 14px;height:46px;font-weight:600;cursor:pointer}
+.radio input{width:18px;height:18px}
+.mine{margin-top:20px;border-top:1px solid var(--line);padding-top:14px}
+.mine .ci button{border:1px solid var(--line);background:none;color:#c0392b;border-radius:8px;height:36px;padding:0 10px;font-weight:600}
+.done{text-align:center}.done .tick{width:76px;height:76px;border-radius:50%;background:var(--g);margin:6px auto 12px;display:grid;place-items:center}
+.done .clock{font:800 44px/1 Figtree;color:var(--gd);margin:8px 0;font-variant-numeric:tabular-nums}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,40px);opacity:0;background:#1c1c1c;color:#fff;padding:12px 18px;border-radius:10px;font-weight:600;font-size:14px;z-index:60;transition:.25s;pointer-events:none;max-width:90vw}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.mbar{display:none}
+footer{background:var(--soft);padding:36px max(5vw,16px) 90px;font-size:14px;color:var(--mut)}
+.fw{max-width:1240px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,2fr);gap:28px}
+.fw h4{color:var(--ink);margin:0 0 10px;font-size:16px}
+.fl{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:6px 16px}
+.fl button{background:none;border:0;color:var(--mut);text-align:left;padding:4px 0;font-size:14px}
+.fl button:hover{color:var(--ink)}
+@media(max-width:860px){.sellb span{display:none}}
+@media(max-width:760px){
+ header{flex-wrap:wrap;height:auto;padding:10px 14px;gap:10px}
+ .logo{border-radius:8px;padding:8px 12px;font-size:22px;align-self:center}
+ .search{order:5;flex-basis:100%;height:44px}
+ .cartb{display:none}.sellb{margin-left:auto;height:40px;padding:0 12px;font-size:14px}
+ main{padding:12px 14px 100px}
+ .hero{grid-template-columns:1fr}.shelf{height:150px;padding-top:16px}
+ .promos{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:82%;overflow-x:auto;padding-bottom:6px}
+ .cats{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px 8px}.tile{font-size:11.5px}
+ .rs{grid-auto-columns:150px}
+ .cv{grid-template-columns:84px minmax(0,1fr)}
+ .side{top:118px}.side button{flex-direction:column;text-align:center;font-size:11px;gap:4px;padding:10px 4px;min-height:84px}
+ .grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));padding:10px;gap:10px}
+ .ch{padding:12px}
+ .mbar{position:fixed;left:12px;right:12px;bottom:12px;z-index:30;background:var(--g);color:#fff;border:0;border-radius:12px;height:58px;padding:0 16px;align-items:center;justify-content:space-between;font:700 15px/1.2 Figtree;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+ .mbar.on{display:flex}
+ .fw{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+ <a class="logo" href="#" aria-label="PageDrop home">page<i>drop</i></a>
+ <button class="loc" id="locBtn"><b>Delivery in 12 minutes</b><span id="locTxt">Hostel Block C, Bhubaneswar ▾</span></button>
+ <label class="search" aria-label="Search books">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+  <input id="q" type="search" placeholder="Search 'HC Verma', 'Tintin', 'Atomic Habits'…" autocomplete="off">
+ </label>
+ <button class="sellb" data-sell>+ <span>Sell old books</span><b style="display:none"></b></button>
+ <button class="cartb" id="cartBtn" data-cart>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 4h2l2.4 11h11l2-8H6.3"/><circle cx="9" cy="19.5" r="1.5"/><circle cx="17" cy="19.5" r="1.5"/></svg>
+  <span id="cartTxt">My Cart</span>
+ </button>
+</header>
+
+<main id="main"></main>
+
+<footer>
+ <div class="fw">
+  <div><h4>pagedrop</h4>A campus marketplace for new and pre-loved books. Buy what you need for the semester, sell what you've finished, and get it delivered to your hostel in minutes.<br><br><small>Listings, prices and delivery times shown are sample data.</small></div>
+  <div><h4>Categories</h4><div class="fl" id="fcats"></div></div>
+ </div>
+</footer>
+
+<button class="mbar" id="mbar" data-cart><span id="mbarTxt"></span><span>View cart ›</span></button>
+
+<div class="ov" id="cartOv"><aside class="drawer" role="dialog" aria-label="Cart">
+ <div class="dh">My Cart<button class="x" data-close aria-label="Close">×</button></div>
+ <div class="db" id="cartBody"></div>
+ <div class="df" id="cartFoot"></div>
+</aside></div>
+
+<div class="mo" id="sellMo"><div class="md" role="dialog" aria-label="Sell a book">
+ <div class="mh"><h3>Sell your old book</h3><button class="x" data-close aria-label="Close">×</button></div>
+ <p class="lead">List it in a minute. A rider picks it up when someone buys it, and the money lands in your account.</p>
+ <form id="sellForm" novalidate>
+  <label for="sT">Book title *</label><input id="sT" required placeholder="e.g. Concepts of Physics Vol 2">
+  <label for="sA">Author *</label><input id="sA" required placeholder="e.g. H.C. Verma">
+  <div class="two">
+   <div><label for="sC">Category</label><select id="sC"></select></div>
+   <div><label for="sK">Condition</label><select id="sK"><option value="0.6">Like new</option><option value="0.45" selected>Good, some marks</option><option value="0.3">Fair, well used</option></select></div>
+  </div>
+  <div class="two">
+   <div><label for="sM">Printed price (MRP) ₹ *</label><input id="sM" type="number" min="10" inputmode="numeric" placeholder="525"></div>
+   <div><label for="sP">Your selling price ₹ *</label><input id="sP" type="number" min="10" inputmode="numeric" placeholder="auto"></div>
+  </div>
+  <div class="hint" id="sHint">Enter the printed price to see a suggested price.</div>
+  <label for="sI">Photo of the book (optional)</label><input id="sI" type="file" accept="image/*" style="padding-top:10px">
+  <div class="prev" id="sPrev"></div>
+  <button class="go" type="submit" style="margin-top:18px"><span>List my book</span><span>›</span></button>
+ </form>
+ <div class="mine" id="mine"></div>
+</div></div>
+
+<div class="mo" id="coMo"><div class="md" role="dialog" aria-label="Checkout">
+ <div class="mh"><h3>Delivery details</h3><button class="x" data-close aria-label="Close">×</button></div>
+ <form id="coForm" novalidate>
+  <div class="two">
+   <div><label for="cN">Name *</label><input id="cN" required autocomplete="name"></div>
+   <div><label for="cP">Phone *</label><input id="cP" required type="tel" inputmode="numeric" autocomplete="tel" placeholder="10 digits"></div>
+  </div>
+  <label for="cA">Address / hostel room *</label><textarea id="cA" required placeholder="Room 214, Hostel Block C"></textarea>
+  <label>Payment</label>
+  <div class="radio"><label><input type="radio" name="pay" value="Cash on delivery" checked>Cash on delivery</label><label><input type="radio" name="pay" value="UPI on delivery">UPI on delivery</label></div>
+  <p id="coErr" style="color:#c0392b;font-size:14px;min-height:20px;margin:10px 0 0"></p>
+  <button class="go" type="submit" id="coGo"></button>
+ </form>
+</div></div>
+
+<div class="mo" id="doneMo"><div class="md done" role="dialog" aria-label="Order placed">
+ <div class="tick"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="m5 12 5 5 9-10"/></svg></div>
+ <h3 style="margin:0;font:800 24px Figtree">Order placed</h3>
+ <p id="doneTxt" style="color:var(--mut);margin:6px 0"></p>
+ <div class="clock" id="clock">12:00</div>
+ <p style="margin:0 0 16px;font-size:14px">until your books reach you</p>
+ <button class="go" data-close style="justify-content:center">Keep browsing</button>
+</div></div>
+
+<div class="mo" id="locMo"><div class="md" role="dialog" aria-label="Delivery location">
+ <div class="mh"><h3>Change location</h3><button class="x" data-close aria-label="Close">×</button></div>
+ <form id="locForm"><label for="lI">Deliver to</label><input id="lI" placeholder="Hostel, block, campus or area">
+ <button class="go" type="submit" style="margin-top:16px;justify-content:center">Save location</button></form>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+{
+const CATS=[
+ ['comics','Comics & Manga','#e63946'],['science','Science & Research','#1d6fa5'],['engg','Engineering Textbooks','#2a9d8f'],
+ ['code','Programming','#6c3fb5'],['exams','JEE, NEET & GATE','#e07a1f'],['fiction','Fiction & Novels','#9c2f6b'],
+ ['self','Self-help & Money','#3a7d44'],['kids',"Children's Books",'#d9930d'],['bio','Biographies','#7a4419'],
+ ['notes','Senior Notes & PYQs','#264653'],['indian','Odia & Indian Classics','#b5332e']];
+const CN=Object.fromEntries(CATS.map(c=>[c[0],c]));
+const RAW=`Tintin: The Blue Lotus|Hergé|comics|249|399|u
+Amar Chitra Katha: Mahabharata Vol 1|Anant Pai|comics|180|250|n
+Asterix the Gaul|Goscinny & Uderzo|comics|299|450|u
+The Complete Calvin and Hobbes Vol 1|Bill Watterson|comics|499|899|u
+Chacha Chaudhary Digest|Pran|comics|99|150|n
+Maus|Art Spiegelman|comics|399|599|n
+A Brief History of Time|Stephen Hawking|science|299|499|n
+The Selfish Gene|Richard Dawkins|science|349|599|u
+Cosmos|Carl Sagan|science|399|699|n
+The Gene: An Intimate History|Siddhartha Mukherjee|science|450|799|n
+The Feynman Lectures on Physics Vol 1|Richard Feynman|science|899|1499|u
+Sapiens|Yuval Noah Harari|science|399|699|u
+Higher Engineering Mathematics|B.S. Grewal|engg|520|899|u
+Basic Electrical Engineering|D.P. Kothari|engg|350|625|u
+Engineering Mechanics|S.S. Bhavikatti|engg|280|450|n
+Engineering Physics|Gaur & Gupta|engg|260|420|u
+Engineering Drawing|N.D. Bhatt|engg|330|550|n
+Let Us C|Yashavant Kanetkar|code|299|450|n
+The C Programming Language|Kernighan & Ritchie|code|249|399|u
+Introduction to Algorithms|Cormen et al.|code|899|1650|u
+Clean Code|Robert C. Martin|code|599|999|n
+Python Crash Course|Eric Matthes|code|699|1199|n
+Head First Java|Sierra & Bates|code|599|950|u
+Concepts of Physics Vol 1|H.C. Verma|exams|380|525|u
+Problems in General Physics|I.E. Irodov|exams|199|299|u
+NCERT Physics Class 12 Part 1|NCERT|exams|160|180|n
+Objective Mathematics|R.D. Sharma|exams|450|720|u
+Quantitative Aptitude|R.S. Aggarwal|exams|399|650|n
+GATE CSE Previous Years Solved|Made Easy|exams|350|540|u
+The Alchemist|Paulo Coelho|fiction|199|350|n
+Harry Potter and the Philosopher's Stone|J.K. Rowling|fiction|299|499|u
+Nineteen Eighty-Four|George Orwell|fiction|149|250|n
+The God of Small Things|Arundhati Roy|fiction|299|499|u
+Five Point Someone|Chetan Bhagat|fiction|99|176|u
+Pride and Prejudice|Jane Austen|fiction|129|199|n
+Atomic Habits|James Clear|self|399|799|n
+Ikigai|García & Miralles|self|299|550|n
+Rich Dad Poor Dad|Robert Kiyosaki|self|199|399|u
+Deep Work|Cal Newport|self|349|599|u
+The Psychology of Money|Morgan Housel|self|299|399|n
+Panchatantra Stories|Vishnu Sharma|kids|149|250|n
+Malgudi Days|R.K. Narayan|kids|179|299|u
+Matilda|Roald Dahl|kids|249|399|u
+The Jungle Book|Rudyard Kipling|kids|129|199|n
+Wings of Fire|A.P.J. Abdul Kalam|bio|199|350|n
+Steve Jobs|Walter Isaacson|bio|499|899|u
+The Story of My Experiments with Truth|M.K. Gandhi|bio|129|200|n
+Surely You're Joking, Mr. Feynman!|Richard Feynman|bio|349|599|u
+Physics Sem 1 Handwritten Notes|Senior, CSE|notes|49|99|u
+Data Structures Notes + PYQs|Senior, CSE|notes|79|149|u
+Maths-1 Solved Assignments|Senior, EE|notes|59|99|u
+C Lab Record, All Programs|Senior, CSE|notes|39|79|u
+Paraja|Gopinath Mohanty|indian|199|300|n
+Chha Mana Atha Guntha|Fakir Mohan Senapati|indian|149|250|u
+Godaan|Premchand|indian|149|250|n
+Gitanjali|Rabindranath Tagore|indian|99|150|u`;
+const PAL=['#2d4a8a','#8a2d3b','#1f6f5c','#6b3fa0','#b5651d','#264653','#9c2f6b','#3a5a40','#7a4419','#1d3557','#c44536','#0f766e'];
+const hue=s=>{let h=7;for(const ch of s)h=(h*31+ch.charCodeAt(0))>>>0;return PAL[h%PAL.length]};
+let books=RAW.split('\n').map((l,i)=>{const[t,a,c,p,m,k]=l.split('|');return{id:'b'+i,t,a,c,p:+p,m:+m,k,r:i}});
+let mine=[];
+try{mine=JSON.parse(localStorage.getItem('pd-mine')||'[]')}catch(e){mine=[]}
+books=books.concat(mine);
+const cart={};
+const st={cat:'comics',f:'all',sort:'pop',q:''};
+let loc='Hostel Block C, Bhubaneswar';
+try{loc=localStorage.getItem('pd-loc')||loc}catch(e){}
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const byId=id=>books.find(b=>b.id===id);
+const rupee=n=>'₹'+n.toLocaleString('en-IN');
+const clock='<svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor"><circle cx="5" cy="5" r="4" stroke-width="1.4"/><path d="M5 2.8V5l1.5 1" stroke-width="1.2"/></svg>';
+const save=()=>{try{localStorage.setItem('pd-mine',JSON.stringify(mine))}catch(e){}};
+
+const cover=b=>`<div class="cov" style="--c:${hue(b.t)}"><span class="ct">${esc(b.t)}</span><span class="ca">${esc(b.a)}</span></div>`;
+const ctl=b=>{const q=cart[b.id]||0;return q?`<div class="step"><button data-dec="${b.id}" aria-label="Remove one">−</button><b>${q}</b><button data-inc="${b.id}" aria-label="Add one">+</button></div>`:`<button class="add" data-inc="${b.id}">ADD</button>`};
+const card=b=>{const off=b.m>b.p?Math.round((1-b.p/b.m)*100):0;
+ return `<article class="card">${off>=10?`<span class="off">${off}%<br>OFF</span>`:''}${b.k==='u'?'<span class="used">PRE-LOVED</span>':''}${cover(b)}
+ <span class="eta">${clock} ${b.k==='u'?18:12} MINS</span><div class="bt">${esc(b.t)}</div>
+ <div class="cond">${b.seller?'Listed by you · ':''}${b.k==='u'?(b.kl||'Used · good condition'):'Brand new · paperback'}</div>
+ <div class="pr"><div><b>${rupee(b.p)}</b>${b.m>b.p?`<s>${rupee(b.m)}</s>`:''}</div><div data-ctl="${b.id}">${ctl(b)}</div></div></article>`};
+const stack=(c,n=4)=>[62,84,48,74,56].slice(0,n).map(h=>`<span style="height:${h}%"></span>`).join('');
+
+function home(){
+ let seed=3;const rnd=()=>(seed=(seed*9301+49297)%233280)/233280;
+ const spines=Array.from({length:30},(_,i)=>`<div class="${i===21?'lean':''}" style="width:${14+rnd()*16|0}px;height:${55+rnd()*40|0}%;background-color:${PAL[i%PAL.length]}"></div>`).join('');
+ const sp=(cols)=>cols.map((c,i)=>`<span style="height:${[70,96,58,82][i]}px;background:${c}"></span>`).join('');
+ return `<section class="hero"><div class="txt"><h1>Books at your door in 12 minutes</h1>
+ <p>Buy new or pre-loved books, or sell the ones you've finished. Comics, research, textbooks, exam prep and more.</p>
+ <div class="hb"><button class="p" data-scroll>Shop books</button><button class="s" data-sell>Sell old books</button></div></div>
+ <div class="shelf" aria-hidden="true">${spines}</div></section>
+ <div class="promos">
+  <div class="promo" style="background:#ffe8a3"><div><h3>Sell your old books</h3><p>List in a minute. Get paid when it's picked up.</p></div><button data-sell>Sell now</button><div class="st">${sp(['#0c831f','#1c1c1c','#e07a1f','#2d4a8a'])}</div></div>
+  <div class="promo" style="background:#cdeffd"><div><h3>Exam season stock</h3><p>HC Verma, Irodov, Grewal and solved PYQs.</p></div><button data-go="cat-exams">Order now</button><div class="st">${sp(['#e07a1f','#1d6fa5','#264653','#c44536'])}</div></div>
+  <div class="promo" style="background:#ffd9df"><div><h3>Comics corner</h3><p>Classic comics and digests, from ₹99.</p></div><button data-go="cat-comics">Order now</button><div class="st">${sp(['#e63946','#d9930d','#6b3fa0','#0f766e'])}</div></div>
+ </div>
+ <div class="cats" id="cats">${CATS.map(c=>`<button class="tile" data-go="cat-${c[0]}"><div class="ti" style="--c:${c[2]}">${stack(c[2])}</div>${esc(c[1])}</button>`).join('')}</div>
+ ${CATS.map(c=>{const l=books.filter(b=>b.c===c[0]);return l.length?`<section class="row"><div class="rh"><h2>${esc(c[1])}</h2><a data-go="cat-${c[0]}" tabindex="0">see all</a></div><div class="rs">${l.map(card).join('')}</div></section>`:''}).join('')}`;
+}
+function sorted(l){
+ const s=[...l];
+ if(st.sort==='low')s.sort((a,b)=>a.p-b.p);else if(st.sort==='high')s.sort((a,b)=>b.p-a.p);
+ else if(st.sort==='off')s.sort((a,b)=>(b.m-b.p)/b.m-(a.m-a.p)/a.m);
+ return s;
+}
+function filt(){return `<div class="chips">${[['all','All'],['n','New'],['u','Pre-loved']].map(([k,v])=>`<button class="${st.f===k?'on':''}" data-f="${k}">${v}</button>`).join('')}
+ <select id="sort" aria-label="Sort"><option value="pop">Relevance</option><option value="low">Price: low to high</option><option value="high">Price: high to low</option><option value="off">Biggest discount</option></select></div>`}
+function catView(){
+ const c=CN[st.cat];
+ const l=sorted(books.filter(b=>b.c===c[0]&&(st.f==='all'||b.k===st.f)));
+ return `<div class="cv"><nav class="side">${CATS.map(x=>`<button class="${x[0]===c[0]?'on':''}" data-go="cat-${x[0]}"><span class="mi" style="--c:${x[2]}"><i style="height:70%"></i><i style="height:95%;opacity:.6"></i><i style="height:55%"></i></span>${esc(x[1])}</button>`).join('')}</nav>
+ <section><div class="ch"><h2>Buy ${esc(c[1])} online</h2>${filt()}</div>
+ <div class="grid">${l.length?l.map(card).join(''):`<div class="empty" style="grid-column:1/-1"><b>Nothing here yet</b>Be the first to list a book in this category.<br><br><button class="add" style="width:auto;padding:0 16px" data-sell>Sell a book</button></div>`}</div></section></div>`;
+}
+function searchView(){
+ const q=st.q.toLowerCase();
+ const l=sorted(books.filter(b=>(b.t+' '+b.a+' '+CN[b.c][1]).toLowerCase().includes(q)&&(st.f==='all'||b.k===st.f)));
+ return `<div class="ch" style="padding:6px 0 14px;border:0"><h2>${l.length} results for “${esc(st.q)}”</h2>${filt()}</div>
+ <div class="grid" style="border-radius:14px">${l.length?l.map(card).join(''):`<div class="empty" style="grid-column:1/-1"><b>No books match that</b>Try an author's name, or a shorter word.<br><br><button class="add" style="width:auto;padding:0 16px" data-sell>Have this book? Sell it</button></div>`}</div>`;
+}
+function render(){
+ const h=location.hash.slice(1);
+ const m=$('#main');
+ if(st.q)m.innerHTML=searchView();
+ else if(h.startsWith('cat-')&&CN[h.slice(4)]){st.cat=h.slice(4);m.innerHTML=catView()}
+ else m.innerHTML=home();
+ const s=$('#sort');if(s)s.value=st.sort;
+}
+function totals(){
+ const items=Object.entries(cart).map(([id,q])=>({b:byId(id),q})).filter(x=>x.b);
+ const n=items.reduce((s,x)=>s+x.q,0),sum=items.reduce((s,x)=>s+x.q*x.b.p,0),mrp=items.reduce((s,x)=>s+x.q*Math.max(x.b.m,x.b.p),0);
+ const del=n&&sum<199?25:0,hand=n?4:0;
+ return{items,n,sum,mrp,del,hand,total:sum+del+hand};
+}
+function updCart(){
+ const T=totals();
+ $('#cartTxt').innerHTML=T.n?`${T.n} item${T.n>1?'s':''}<br>${rupee(T.sum)}`:'My Cart';
+ $('#mbar').classList.toggle('on',T.n>0);
+ $('#mbarTxt').innerHTML=`${T.n} item${T.n>1?'s':''} · ${rupee(T.total)}`;
+ if(!T.n){
+  $('#cartBody').innerHTML=`<div class="box empty"><b>Your cart is empty</b>Add a few books and they'll show up here.<br><br><button class="add" style="width:auto;padding:0 16px" data-close data-scroll>Browse books</button></div>`;
+  $('#cartFoot').innerHTML='';return;
+ }
+ $('#cartBody').innerHTML=`<div class="box"><div class="del">${clock.replace(/10/g,'22')}<div><b>Delivery in 12 minutes</b>${T.n} item${T.n>1?'s':''} to ${esc(loc)}</div></div></div>
+ <div class="box">${T.items.map(({b})=>`<div class="ci"><div class="mc" style="--c:${hue(b.t)}"></div><div><p>${esc(b.t)}</p><small>${b.k==='u'?'Pre-loved':'New'} · ${rupee(b.p)}</small></div><div data-ctl="${b.id}">${ctl(b)}</div></div>`).join('')}</div>
+ <div class="box"><h4>Bill details</h4>
+  <div class="bl"><span>Items total</span><span>${T.mrp>T.sum?`<s style="color:var(--mut)">${rupee(T.mrp)}</s> `:''}${rupee(T.sum)}</span></div>
+  <div class="bl"><span>Delivery charge</span><span>${T.del?rupee(T.del):'<b style="color:var(--gd)">FREE</b>'}</span></div>
+  <div class="bl"><span>Handling charge</span><span>${rupee(T.hand)}</span></div>
+  <div class="bl t"><span>Grand total</span><span>${rupee(T.total)}</span></div>
+  ${T.mrp>T.sum?`<div class="save">You're saving ${rupee(T.mrp-T.sum)} on this order</div>`:''}
+  ${T.del?`<div class="save" style="color:var(--gd);background:color-mix(in srgb,var(--g) 9%,var(--card))">Add ${rupee(199-T.sum)} more for free delivery</div>`:''}</div>`;
+ $('#cartFoot').innerHTML=`<button class="go" data-checkout><span>${rupee(T.total)}<br><small style="font-weight:500;font-size:12px">TOTAL</small></span><span>Proceed ›</span></button>`;
+}
+function sync(id){const b=byId(id);document.querySelectorAll(`[data-ctl="${id}"]`).forEach(el=>{el.innerHTML=b?ctl(b):''});updCart()}
+let tt;function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('show'),2400)}
+let timer;
+function closeAll(){document.querySelectorAll('.ov.open,.mo.open').forEach(e=>e.classList.remove('open'));clearInterval(timer);document.body.style.overflow=''}
+function open(id){document.body.style.overflow='hidden';$(id).classList.add('open')}
+function mineList(){
+ $('#mine').innerHTML=mine.length?`<h4 style="margin:0 0 6px">Your listings (${mine.length})</h4>${mine.map(b=>`<div class="ci"><div class="mc" style="--c:${hue(b.t)}"></div><div><p>${esc(b.t)}</p><small>${esc(CN[b.c][1])} · ${rupee(b.p)}</small></div><button data-rm="${b.id}">Remove</button></div>`).join('')}`:'';
+}
+function hint(){
+ const m=+$('#sM').value,f=+$('#sK').value;
+ if(!m){$('#sHint').textContent='Enter the printed price to see a suggested price.';return}
+ const sug=Math.max(10,Math.round(m*f/5)*5),p=+$('#sP').value||sug;
+ $('#sP').placeholder=sug;
+ $('#sHint').innerHTML=`Suggested price: <b>${rupee(sug)}</b>. At ${rupee(p)} you get <b>${rupee(Math.round(p*0.9))}</b> after the 10% platform fee.`;
+}
+$('#sC').innerHTML=CATS.map(c=>`<option value="${c[0]}">${esc(c[1])}</option>`).join('');
+$('#fcats').innerHTML=CATS.map(c=>`<button data-go="cat-${c[0]}">${esc(c[1])}</button>`).join('');
+$('#locTxt').textContent=loc+' ▾';
+
+document.addEventListener('click',e=>{
+ const t=e.target.closest('button,a,[data-go]');if(!t)return;
+ const d=t.dataset;
+ if(e.target.classList.contains('ov')||e.target.classList.contains('mo'))return;
+ if(d.inc){cart[d.inc]=(cart[d.inc]||0)+1;sync(d.inc);if(cart[d.inc]===1)toast('Added to cart');return}
+ if(d.dec){cart[d.dec]--;if(cart[d.dec]<=0)delete cart[d.dec];sync(d.dec);return}
+ if('close' in d)closeAll();
+ if(d.go){e.preventDefault();st.q='';$('#q').value='';st.f='all';if(location.hash==='#'+d.go)render();else location.hash=d.go;window.scrollTo(0,0);return}
+ if('scroll' in d){if(location.hash||st.q){st.q='';$('#q').value='';history.replaceState(null,'',' ');render()}setTimeout(()=>{const c=$('#cats');if(c)c.scrollIntoView({behavior:'smooth',block:'start'})},30);return}
+ if(d.f){st.f=d.f;render();return}
+ if('sell' in d){closeAll();mineList();hint();open('#sellMo');return}
+ if('cart' in d){updCart();open('#cartOv');return}
+ if('checkout' in d){closeAll();$('#coGo').innerHTML=`<span>Pay ${rupee(totals().total)} on delivery</span><span>Place order ›</span>`;$('#coErr').textContent='';$('#cA').value=$('#cA').value||loc;open('#coMo');return}
+ if(d.rm){mine=mine.filter(b=>b.id!==d.rm);books=books.filter(b=>b.id!==d.rm);delete cart[d.rm];save();mineList();render();updCart();toast('Listing removed');return}
+ if(t.classList.contains('logo')){e.preventDefault();st.q='';$('#q').value='';history.replaceState(null,'',' ');render();window.scrollTo(0,0)}
+});
+document.querySelectorAll('.ov,.mo').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)closeAll()}));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeAll()});
+document.addEventListener('change',e=>{if(e.target.id==='sort'){st.sort=e.target.value;render()}});
+$('#locBtn').addEventListener('click',()=>{$('#lI').value=loc;open('#locMo')});
+$('#locForm').addEventListener('submit',e=>{e.preventDefault();const v=$('#lI').value.trim();if(v){loc=v;$('#locTxt').textContent=v+' ▾';try{localStorage.setItem('pd-loc',v)}catch(x){}}closeAll();toast('Delivery location updated')});
+let qt;$('#q').addEventListener('input',e=>{clearTimeout(qt);qt=setTimeout(()=>{st.q=e.target.value.trim();render()},120)});
+['sM','sK','sP'].forEach(id=>$('#'+id).addEventListener('input',hint));
+$('#sI').addEventListener('change',e=>{const f=e.target.files[0];if(!f){$('#sPrev').innerHTML='';return}
+ const u=URL.createObjectURL(f);$('#sPrev').innerHTML=`<img src="${u}" alt="Your book photo"><small>${esc(f.name)}</small>`});
+$('#sellForm').addEventListener('submit',e=>{
+ e.preventDefault();
+ const t=$('#sT').value.trim(),a=$('#sA').value.trim(),m=+$('#sM').value,f=+$('#sK').value;
+ const p=+$('#sP').value||Math.max(10,Math.round(m*f/5)*5);
+ if(!t||!a||!m){$('#sHint').innerHTML='<b style="color:#c0392b">Please fill the title, author and printed price.</b>';return}
+ const kl={0.6:'Used · like new',0.45:'Used · good condition',0.3:'Used · fair condition'}[f];
+ const b={id:'u'+Date.now(),t,a,c:$('#sC').value,p,m:Math.max(m,p),k:'u',kl,seller:1};
+ mine.unshift(b);books.unshift(b);save();
+ e.target.reset();$('#sPrev').innerHTML='';$('#sP').placeholder='auto';hint();mineList();render();
+ toast(`Listed! "${t}" is now live in ${CN[b.c][1]}`);
+});
+$('#coForm').addEventListener('submit',e=>{
+ e.preventDefault();
+ const n=$('#cN').value.trim(),p=$('#cP').value.replace(/\D/g,''),a=$('#cA').value.trim();
+ if(!n||p.length!==10||!a){$('#coErr').textContent=!n||!a?'Please fill your name and address.':'Enter a 10-digit phone number.';return}
+ const T=totals(),pay=document.querySelector('input[name=pay]:checked').value;
+ const id='PD'+String(Date.now()).slice(-6);
+ Object.keys(cart).forEach(k=>delete cart[k]);
+ closeAll();render();updCart();
+ $('#doneTxt').textContent=`Order ${id} · ${T.n} book${T.n>1?'s':''} · ${rupee(T.total)} by ${pay.toLowerCase()} · to ${a}`;
+ let s=12*60;$('#clock').textContent='12:00';open('#doneMo');
+ timer=setInterval(()=>{s--;if(s<=0){clearInterval(timer);$('#clock').textContent='Arrived';return}$('#clock').textContent=`${s/60|0}:${String(s%60).padStart(2,'0')}`},1000);
+});
+window.addEventListener('hashchange',()=>{st.q='';$('#q').value='';render()});
+render();updCart();
+}
+</script>
+</body>
+</html>
