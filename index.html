@@ -5,12 +5,11 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>PageDrop books</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<script type="module" src="https://unpkg.com/@splinetool/viewer@2.0.121/build/spline-viewer.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,600&display=swap" rel="stylesheet">
 <style>
 /* VOICE: quick-commerce shop, fast, bright, friendly, built for students
    IDEA: a 10-minute grocery app whose shelves hold books instead of groceries
-   PICTURE: a filled bookshelf in the hero; every product is a drawn book cover
+   PICTURE: a CSS 3D spinning book stack in the hero; every product is a drawn book cover
    COLOUR and TYPE: shop yellow, deep basket green, white; Figtree for UI, Fraunces on covers
    LAYOUT: sticky header with ETA, search and cart; banners, category tiles, scrolling rows; category page with sidebar */
 :root{color-scheme:light dark;--bg:light-dark(#fff,#111312);--soft:light-dark(#f4f6fb,#1a1d1c);--ink:light-dark(#1c1c1c,#eceeed);--mut:light-dark(#666,#a3a8a6);--line:light-dark(#e8e8e8,#2b2f2d);--card:light-dark(#fff,#181b1a);--y:#f8cb46;--g:#0c831f;--gd:light-dark(#0c831f,#3ccf58)}
@@ -37,12 +36,35 @@ main{max-width:1240px;margin:0 auto;padding:16px 24px 90px}
 .hb{display:flex;gap:10px;flex-wrap:wrap}
 .hb button{height:46px;border-radius:10px;padding:0 18px;font-weight:700;font-size:15px;border:0}
 .hb .p{background:var(--y);color:#1c1c1c}.hb .s{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.7)}
-.shelf{display:flex;align-items:flex-end;justify-content:center;gap:3px;padding:30px 20px 0;background:radial-gradient(circle at 60% 30%,#1a8a33,#0b5d1e 70%);border-bottom:16px solid #6b4423;box-shadow:inset 0 -2px 0 #8a5a30}
-.shelf div{border-radius:3px 3px 0 0;box-shadow:inset -5px 0 rgba(0,0,0,.2),inset 2px 0 rgba(255,255,255,.15);background-image:linear-gradient(transparent 14%,rgba(255,255,255,.35) 14% 17%,transparent 17% 80%,rgba(0,0,0,.2) 80% 83%,transparent 83%)}
-.shelf{position:relative;min-height:300px}
-.s3d{position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity .8s}
-.shelf.live .s3d{opacity:1}.shelf.live>div{visibility:hidden}
-.shelf div.lean{transform:rotate(8deg);transform-origin:bottom left;margin-left:6px}
+.hero{background:radial-gradient(circle at 85% 20%,rgba(248,203,70,.25),transparent 40%),linear-gradient(120deg,#0a541a,#0c831f 55%,#14a83c)}
+.scene{position:relative;min-height:330px;perspective:1100px;overflow:hidden;touch-action:pan-y}
+.glow{position:absolute;left:50%;top:66%;width:420px;height:160px;transform:translate(-50%,-50%);background:radial-gradient(closest-side,rgba(248,203,70,.45),transparent);pointer-events:none}
+.world{position:absolute;left:50%;top:64%;width:0;height:0;transform-style:preserve-3d;transform:scale(var(--k,1)) rotateX(calc(-18deg - var(--ty,0) * 8deg)) rotateY(calc(var(--tx,0) * 16deg));transition:transform .4s ease-out}
+.spin{position:absolute;transform-style:preserve-3d;animation:spin 18s linear infinite}
+@keyframes spin{to{transform:rotateY(360deg)}}
+.bx{position:absolute;transform-style:preserve-3d}
+.bx>i{position:absolute;left:0;top:0;display:block}
+.pg{background:repeating-linear-gradient(0deg,#f7f0de 0 2px,#e2d8bf 2px 3px)}
+.plat{position:absolute;left:0;top:0;width:290px;height:290px;border-radius:50%;transform:translate(-50%,-50%) rotateX(90deg);background:radial-gradient(circle at 40% 35%,#ffe27a,#f8cb46 55%,#e0a91f);box-shadow:0 0 0 6px #d99a12}
+.fl{position:absolute;transform-style:preserve-3d;animation:bob 4.2s ease-in-out infinite}
+.fl>.bx{transition:none}
+@keyframes bob{50%{translate:0 -18px}}
+.spark{position:absolute;width:22px;height:22px;background:#f8cb46;clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%);animation:tw 2.4s ease-in-out infinite}
+.spark.w{background:#fff}
+@keyframes tw{50%{transform:scale(.45) rotate(45deg);opacity:.6}}
+.lbl{display:grid;place-items:center;font:800 15px/1 Figtree;color:#fff;letter-spacing:.5px}
+.tick{background:var(--y);color:#1c1c1c;overflow:hidden;white-space:nowrap;font:700 14px Figtree;border-bottom:1px solid rgba(0,0,0,.08)}
+.tk{display:inline-flex;gap:44px;padding:9px 0 9px 44px;animation:tk 32s linear infinite}
+.tk span::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--g);margin-right:10px;vertical-align:middle}
+@keyframes tk{to{transform:translateX(-50%)}}
+.how{margin:34px 0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.how h2{grid-column:1/-1;margin:0}
+.hw{border-radius:18px;padding:22px;color:#1c1c1c;display:flex;gap:16px;align-items:flex-start}
+.hw svg{flex:none;width:56px;height:56px;border-radius:14px;background:rgba(255,255,255,.7);padding:10px}
+.hw b{display:block;font-size:18px;margin-bottom:4px}.hw p{margin:0;font-size:14px}
+h2 .mi{width:34px;height:34px;padding:6px 6px 0;border-radius:9px}
+.rh h2{display:flex;align-items:center;gap:10px}
+.card{transition:transform .15s,box-shadow .15s}.card:hover{transform:translateY(-3px);box-shadow:0 12px 26px rgba(0,0,0,.09)}
 .promos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:16px 0}
 .promo{position:relative;overflow:hidden;border-radius:16px;padding:20px;min-height:170px;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;color:#1c1c1c}
 .promo h3{font:800 22px/1.1 Figtree;margin:0 0 6px;max-width:62%}.promo p{margin:0;font-size:14px;max-width:62%}
@@ -51,7 +73,7 @@ main{max-width:1240px;margin:0 auto;padding:16px 24px 90px}
 .promo .st span{width:22px;border-radius:3px 3px 0 0;box-shadow:inset -4px 0 rgba(0,0,0,.2)}
 .cats{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:16px 12px;margin:26px 0}
 .tile{background:none;border:0;text-align:center;font:600 13px/1.25 Figtree;color:var(--ink);padding:0}
-.ti{aspect-ratio:1;border-radius:16px;background:color-mix(in srgb,var(--c) 15%,var(--bg));display:flex;align-items:flex-end;justify-content:center;gap:3px;padding:16px 10px 0;margin-bottom:6px;overflow:hidden;transition:transform .15s}
+.ti{aspect-ratio:1;border-radius:16px;background:linear-gradient(160deg,color-mix(in srgb,var(--c) 30%,var(--bg)),color-mix(in srgb,var(--c) 12%,var(--bg)));display:flex;align-items:flex-end;justify-content:center;gap:3px;padding:16px 10px 0;margin-bottom:6px;overflow:hidden;transition:transform .15s}
 .tile:hover .ti{transform:translateY(-3px)}
 .ti span{width:15%;background:var(--c);border-radius:2px 2px 0 0;box-shadow:inset -3px 0 rgba(0,0,0,.2)}
 .ti span:nth-child(2){opacity:.6}
@@ -125,12 +147,12 @@ textarea{height:76px;padding:10px 12px;resize:vertical}
 .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,40px);opacity:0;background:#1c1c1c;color:#fff;padding:12px 18px;border-radius:10px;font-weight:600;font-size:14px;z-index:60;transition:.25s;pointer-events:none;max-width:90vw}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 .mbar{display:none}
-footer{background:var(--soft);padding:36px max(5vw,16px) 90px;font-size:14px;color:var(--mut)}
+footer{background:#0b5d1e;padding:36px max(5vw,16px) 90px;font-size:14px;color:#cfe9d4}
 .fw{max-width:1240px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,2fr);gap:28px}
-.fw h4{color:var(--ink);margin:0 0 10px;font-size:16px}
+.fw h4{color:var(--y);margin:0 0 10px;font-size:16px}
 .fl{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:6px 16px}
-.fl button{background:none;border:0;color:var(--mut);text-align:left;padding:4px 0;font-size:14px}
-.fl button:hover{color:var(--ink)}
+.fl button{background:none;border:0;color:#cfe9d4;text-align:left;padding:4px 0;font-size:14px}
+.fl button:hover{color:#fff}
 @media(max-width:860px){.sellb span{display:none}}
 @media(max-width:760px){
  header{flex-wrap:wrap;height:auto;padding:10px 14px;gap:10px}
@@ -138,7 +160,7 @@ footer{background:var(--soft);padding:36px max(5vw,16px) 90px;font-size:14px;col
  .search{order:5;flex-basis:100%;height:44px}
  .cartb{display:none}.sellb{margin-left:auto;height:40px;padding:0 12px;font-size:14px}
  main{padding:12px 14px 100px}
- .hero{grid-template-columns:1fr}.shelf{height:150px;padding-top:16px}
+ .hero{grid-template-columns:1fr}.scene{min-height:270px}.world{--k:.6}.how{grid-template-columns:1fr}
  .promos{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:82%;overflow-x:auto;padding-bottom:6px}
  .cats{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px 8px}.tile{font-size:11.5px}
  .rs{grid-auto-columns:150px}
@@ -150,7 +172,7 @@ footer{background:var(--soft);padding:36px max(5vw,16px) 90px;font-size:14px;col
  .mbar.on{display:flex}
  .fw{grid-template-columns:1fr}
 }
-@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}.spin,.fl,.spark,.tk{animation:none!important}}
 </style>
 </head>
 <body>
@@ -167,6 +189,7 @@ footer{background:var(--soft);padding:36px max(5vw,16px) 90px;font-size:14px;col
   <span id="cartTxt">My Cart</span>
  </button>
 </header>
+<div class="tick" aria-label="Offers"><div class="tk"><span>Free delivery above ₹199</span><span>Pre-loved books up to 60% off</span><span>Sell your old books in 1 minute</span><span>Senior notes and PYQs from ₹39</span><span>Exam season: HC Verma, Irodov, Grewal in stock</span><span>Delivered to your hostel in 12 minutes</span><span>Free delivery above ₹199</span><span>Pre-loved books up to 60% off</span><span>Sell your old books in 1 minute</span><span>Senior notes and PYQs from ₹39</span><span>Exam season: HC Verma, Irodov, Grewal in stock</span><span>Delivered to your hostel in 12 minutes</span></div></div>
 
 <main id="main"></main>
 
@@ -246,12 +269,39 @@ const CATS=[
  ['code','Programming','#6c3fb5'],['exams','JEE, NEET & GATE','#e07a1f'],['fiction','Fiction & Novels','#9c2f6b'],
  ['self','Self-help & Money','#3a7d44'],['kids',"Children's Books",'#d9930d'],['bio','Biographies','#7a4419'],
  ['notes','Senior Notes & PYQs','#264653'],['indian','Odia & Indian Classics','#b5332e']];
-const SCENE='https://prod.spline.design/ZOlHQtseweDT3kUS/scene.splinecode';
-function hook3d(m){
- const v=m.querySelector('.s3d');if(!v)return;
- const on=()=>v.parentElement&&v.parentElement.classList.add('live');
- v.addEventListener('load-complete',on);
- setTimeout(()=>{try{if(v.shadowRoot&&v.shadowRoot.querySelector('canvas'))on()}catch(e){}},6000);
+const FACE=(w,h,d)=>[['front',w,h,'rotateY(0deg)',d/2],['back',w,h,'rotateY(180deg)',d/2],['right',d,h,'rotateY(90deg)',w/2],['left',d,h,'rotateY(-90deg)',w/2],['top',w,d,'rotateX(90deg)',h/2],['bottom',w,d,'rotateX(-90deg)',h/2]];
+function box(w,h,d,look,pos){
+ return `<div class="bx" style="transform:${pos}">${FACE(w,h,d).map(([n,fw,fh,r,z])=>`<i class="${look[n]&&look[n].c||''}" style="width:${fw}px;height:${fh}px;transform:translate(-50%,-50%) ${r} translateZ(${z}px);background:${look[n]&&look[n].bg||''}">${look[n]&&look[n].html||''}</i>`).join('')}</div>`;
+}
+function bookBox(w,h,d,col,pos){
+ const cover=`linear-gradient(90deg,rgba(0,0,0,.22) 0 7%,transparent 7%),linear-gradient(transparent 28%,rgba(255,255,255,.85) 28% 32%,transparent 32% 60%,rgba(255,255,255,.45) 60% 63%,transparent 63%),${col}`;
+ const pg={c:'pg',bg:''};
+ const edge=`repeating-linear-gradient(0deg,#f7f0de 0 2px,#e2d8bf 2px 3px) padding-box,${col}`;
+ const pe={bg:edge};
+ return box(w,h,d,{top:{bg:cover},bottom:{bg:col},left:{bg:`linear-gradient(90deg,rgba(0,0,0,.25),rgba(255,255,255,.15) 50%,rgba(0,0,0,.25)),${col}`},front:pe,back:pe,right:pe},pos);
+}
+function scene(){
+ const B=[[200,30,140,'#1d4f91',0],[180,26,128,'#e63946',14],[190,24,132,'#f8cb46',-9],[168,22,120,'#6c3fb5',20],[150,20,110,'#2a9d8f',-6]];
+ let y=4;const stack=B.map(([w,h,d,c,r])=>{const s=bookBox(w,h,d,c,`translate3d(0,${-(y+h/2)}px,0) rotateY(${r}deg)`);y+=h;return s}).join('');
+ const kraft='#d19a5b';
+ const boxLook={top:{bg:'#e2b277'},bottom:{bg:kraft},left:{bg:'#b98447'},back:{bg:kraft},right:{bg:'#c48d50'},front:{bg:`linear-gradient(transparent 22%,#0c831f 22% 46%,transparent 46%),${kraft}`,c:'lbl',html:'<span style="margin-top:-14px">12 MIN</span>'}};
+ const sp=[[12,18,0],[24,72,1],[80,14,0],[88,62,1],[50,8,1],[6,58,0],[66,40,0]];
+ return `<div class="scene" id="scene"><div class="glow"></div>
+ ${sp.map(([x,y,w],i)=>`<span class="spark${w?' w':''}" style="left:${x}%;top:${y}%;animation-delay:${i*.35}s;width:${14+i*2}px;height:${14+i*2}px"></span>`).join('')}
+ <div class="world">
+  <div class="plat"></div>
+  <div class="spin">${stack}</div>
+  <div class="fl" style="animation-delay:-1s;transform:translate3d(-215px,-165px,30px)">${bookBox(130,22,92,'#e07a1f','rotateX(-28deg) rotateY(25deg) rotateZ(-14deg)')}</div>
+  <div class="fl" style="animation-delay:-2.3s;transform:translate3d(190px,-150px,-40px)">${bookBox(118,20,84,'#1d6fa5','rotateX(-32deg) rotateY(-30deg) rotateZ(12deg)')}</div>
+  <div class="fl" style="animation-delay:-.4s;transform:translate3d(205px,-60px,60px)">${bookBox(112,18,80,'#9c2f6b','rotateX(-24deg) rotateY(-35deg) rotateZ(-10deg)')}</div>
+  <div class="fl" style="animation-delay:-3.1s;animation-duration:5s;transform:translate3d(-200px,-45px,70px)">${box(78,66,78,boxLook,'rotateY(24deg)')}</div>
+ </div></div>`;
+}
+function hookScene(m){
+ const sc=m.querySelector('#scene');if(!sc)return;
+ const w=sc.querySelector('.world');
+ sc.addEventListener('pointermove',e=>{const r=sc.getBoundingClientRect();w.style.setProperty('--tx',((e.clientX-r.left)/r.width-.5).toFixed(3));w.style.setProperty('--ty',((e.clientY-r.top)/r.height-.5).toFixed(3))});
+ sc.addEventListener('pointerleave',()=>{w.style.setProperty('--tx',0);w.style.setProperty('--ty',0)});
 }
 const CN=Object.fromEntries(CATS.map(c=>[c[0],c]));
 const RAW=`Tintin: The Blue Lotus|Hergé|comics|249|399|u
@@ -337,20 +387,24 @@ const card=b=>{const off=b.m>b.p?Math.round((1-b.p/b.m)*100):0;
 const stack=(c,n=4)=>[62,84,48,74,56].slice(0,n).map(h=>`<span style="height:${h}%"></span>`).join('');
 
 function home(){
- let seed=3;const rnd=()=>(seed=(seed*9301+49297)%233280)/233280;
- const spines=Array.from({length:30},(_,i)=>`<div class="${i===21?'lean':''}" style="width:${14+rnd()*16|0}px;height:${55+rnd()*40|0}%;background-color:${PAL[i%PAL.length]}"></div>`).join('');
  const sp=(cols)=>cols.map((c,i)=>`<span style="height:${[70,96,58,82][i]}px;background:${c}"></span>`).join('');
  return `<section class="hero"><div class="txt"><h1>Books at your door in 12 minutes</h1>
  <p>Buy new or pre-loved books, or sell the ones you've finished. Comics, research, textbooks, exam prep and more.</p>
  <div class="hb"><button class="p" data-scroll>Shop books</button><button class="s" data-sell>Sell old books</button></div></div>
- <div class="shelf" aria-hidden="true">${spines}<spline-viewer class="s3d" url="${SCENE}" loading-anim-type="none"></spline-viewer></div></section>
+ ${scene()}</section>
  <div class="promos">
   <div class="promo" style="background:#ffe8a3"><div><h3>Sell your old books</h3><p>List in a minute. Get paid when it's picked up.</p></div><button data-sell>Sell now</button><div class="st">${sp(['#0c831f','#1c1c1c','#e07a1f','#2d4a8a'])}</div></div>
   <div class="promo" style="background:#cdeffd"><div><h3>Exam season stock</h3><p>HC Verma, Irodov, Grewal and solved PYQs.</p></div><button data-go="cat-exams">Order now</button><div class="st">${sp(['#e07a1f','#1d6fa5','#264653','#c44536'])}</div></div>
   <div class="promo" style="background:#ffd9df"><div><h3>Comics corner</h3><p>Classic comics and digests, from ₹99.</p></div><button data-go="cat-comics">Order now</button><div class="st">${sp(['#e63946','#d9930d','#6b3fa0','#0f766e'])}</div></div>
  </div>
- <div class="cats" id="cats">${CATS.map(c=>`<button class="tile" data-go="cat-${c[0]}"><div class="ti" style="--c:${c[2]}">${stack(c[2])}</div>${esc(c[1])}</button>`).join('')}</div>
- ${CATS.map(c=>{const l=books.filter(b=>b.c===c[0]);return l.length?`<section class="row"><div class="rh"><h2>${esc(c[1])}</h2><a data-go="cat-${c[0]}" tabindex="0">see all</a></div><div class="rs">${l.map(card).join('')}</div></section>`:''}).join('')}`;
+ <h2 style="margin-top:28px">Shop by category</h2>
+ <div class="cats" id="cats" style="margin-top:12px">${CATS.map(c=>`<button class="tile" data-go="cat-${c[0]}"><div class="ti" style="--c:${c[2]}">${stack(c[2])}</div>${esc(c[1])}</button>`).join('')}</div>
+ <section class="how"><h2>How PageDrop works</h2>
+  <div class="hw" style="background:#ffe8a3"><svg viewBox="0 0 24 24" fill="none" stroke="#1c1c1c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h6a2 2 0 0 1 2 2v12a2 2 0 0 0-2-2H4z"/><path d="M20 5h-6a2 2 0 0 0-2 2v12a2 2 0 0 1 2-2h6z"/></svg><div><b>Pick your books</b><p>New or pre-loved, from comics to GATE prep. Add to cart in one tap.</p></div></div>
+  <div class="hw" style="background:#cdeffd"><svg viewBox="0 0 24 24" fill="none" stroke="#1c1c1c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="17" r="2.5"/><circle cx="18" cy="17" r="2.5"/><path d="M8.5 17h7M4 13h7l2-5h3l2.5 6.5"/><path d="M11 13V8H7"/></svg><div><b>Delivered in 12 minutes</b><p>A campus rider brings it to your hostel room. Pay cash or UPI.</p></div></div>
+  <div class="hw" style="background:#ffd9df"><svg viewBox="0 0 24 24" fill="none" stroke="#1c1c1c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M9 9.5h5.5M9 12h5.5M11 9.5c2.5 0 2.5 5-1 5l4 3"/></svg><div><b>Sell your old ones</b><p>List a book you've finished and get paid when someone buys it.</p></div></div>
+ </section>
+ ${CATS.map(c=>{const l=books.filter(b=>b.c===c[0]);return l.length?`<section class="row"><div class="rh"><h2><span class="mi" style="--c:${c[2]}"><i style="height:70%"></i><i style="height:95%;opacity:.6"></i><i style="height:55%"></i></span>${esc(c[1])}</h2><a data-go="cat-${c[0]}" tabindex="0">see all</a></div><div class="rs">${l.map(card).join('')}</div></section>`:''}).join('')}`;
 }
 function sorted(l){
  const s=[...l];
@@ -378,7 +432,7 @@ function render(){
  const m=$('#main');
  if(st.q)m.innerHTML=searchView();
  else if(h.startsWith('cat-')&&CN[h.slice(4)]){st.cat=h.slice(4);m.innerHTML=catView()}
- else{m.innerHTML=home();hook3d(m)}
+ else{m.innerHTML=home();hookScene(m)}
  const s=$('#sort');if(s)s.value=st.sort;
 }
 function totals(){
