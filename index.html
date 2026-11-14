@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>PageDrop books</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<script type="module" src="https://unpkg.com/@splinetool/viewer@2.0.121/build/spline-viewer.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,600&display=swap" rel="stylesheet">
 <style>
 /* VOICE: quick-commerce shop, fast, bright, friendly, built for students
@@ -38,6 +39,9 @@ main{max-width:1240px;margin:0 auto;padding:16px 24px 90px}
 .hb .p{background:var(--y);color:#1c1c1c}.hb .s{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.7)}
 .shelf{display:flex;align-items:flex-end;justify-content:center;gap:3px;padding:30px 20px 0;background:radial-gradient(circle at 60% 30%,#1a8a33,#0b5d1e 70%);border-bottom:16px solid #6b4423;box-shadow:inset 0 -2px 0 #8a5a30}
 .shelf div{border-radius:3px 3px 0 0;box-shadow:inset -5px 0 rgba(0,0,0,.2),inset 2px 0 rgba(255,255,255,.15);background-image:linear-gradient(transparent 14%,rgba(255,255,255,.35) 14% 17%,transparent 17% 80%,rgba(0,0,0,.2) 80% 83%,transparent 83%)}
+.shelf{position:relative;min-height:300px}
+.s3d{position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity .8s}
+.shelf.live .s3d{opacity:1}.shelf.live>div{visibility:hidden}
 .shelf div.lean{transform:rotate(8deg);transform-origin:bottom left;margin-left:6px}
 .promos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:16px 0}
 .promo{position:relative;overflow:hidden;border-radius:16px;padding:20px;min-height:170px;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;color:#1c1c1c}
@@ -242,6 +246,13 @@ const CATS=[
  ['code','Programming','#6c3fb5'],['exams','JEE, NEET & GATE','#e07a1f'],['fiction','Fiction & Novels','#9c2f6b'],
  ['self','Self-help & Money','#3a7d44'],['kids',"Children's Books",'#d9930d'],['bio','Biographies','#7a4419'],
  ['notes','Senior Notes & PYQs','#264653'],['indian','Odia & Indian Classics','#b5332e']];
+const SCENE='https://prod.spline.design/ZOlHQtseweDT3kUS/scene.splinecode';
+function hook3d(m){
+ const v=m.querySelector('.s3d');if(!v)return;
+ const on=()=>v.parentElement&&v.parentElement.classList.add('live');
+ v.addEventListener('load-complete',on);
+ setTimeout(()=>{try{if(v.shadowRoot&&v.shadowRoot.querySelector('canvas'))on()}catch(e){}},6000);
+}
 const CN=Object.fromEntries(CATS.map(c=>[c[0],c]));
 const RAW=`Tintin: The Blue Lotus|Hergé|comics|249|399|u
 Amar Chitra Katha: Mahabharata Vol 1|Anant Pai|comics|180|250|n
@@ -332,7 +343,7 @@ function home(){
  return `<section class="hero"><div class="txt"><h1>Books at your door in 12 minutes</h1>
  <p>Buy new or pre-loved books, or sell the ones you've finished. Comics, research, textbooks, exam prep and more.</p>
  <div class="hb"><button class="p" data-scroll>Shop books</button><button class="s" data-sell>Sell old books</button></div></div>
- <div class="shelf" aria-hidden="true">${spines}</div></section>
+ <div class="shelf" aria-hidden="true">${spines}<spline-viewer class="s3d" url="${SCENE}" loading-anim-type="none"></spline-viewer></div></section>
  <div class="promos">
   <div class="promo" style="background:#ffe8a3"><div><h3>Sell your old books</h3><p>List in a minute. Get paid when it's picked up.</p></div><button data-sell>Sell now</button><div class="st">${sp(['#0c831f','#1c1c1c','#e07a1f','#2d4a8a'])}</div></div>
   <div class="promo" style="background:#cdeffd"><div><h3>Exam season stock</h3><p>HC Verma, Irodov, Grewal and solved PYQs.</p></div><button data-go="cat-exams">Order now</button><div class="st">${sp(['#e07a1f','#1d6fa5','#264653','#c44536'])}</div></div>
@@ -367,7 +378,7 @@ function render(){
  const m=$('#main');
  if(st.q)m.innerHTML=searchView();
  else if(h.startsWith('cat-')&&CN[h.slice(4)]){st.cat=h.slice(4);m.innerHTML=catView()}
- else m.innerHTML=home();
+ else{m.innerHTML=home();hook3d(m)}
  const s=$('#sort');if(s)s.value=st.sort;
 }
 function totals(){
